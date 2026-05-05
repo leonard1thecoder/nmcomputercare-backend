@@ -1,0 +1,49 @@
+services:
+  nm-computercare-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: leonard1thecoder/nm-computercare-backend:latest
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-dev}
+      SPRING_REDIS_HOST: ${REDIS_HOST:-redis}
+      SPRING_REDIS_PORT: ${REDIS_PORT:-6379}
+      SUPABASE_URL: ${SUPABASE_URL}      # ← pulled from .env
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      PORT: ${CONTAINER_PORT:-9098}
+    ports:
+      - "${APP_EXTERNAL_PORT:-8080}:${CONTAINER_PORT:-9098}"                     # Adjust if needed
+    depends_on:
+      redis:
+        condition: service_healthy      # Waits until Redis reports healthy
+    restart: unless-stopped
+    networks:
+      - app-network
+
+
+  redis:
+    image: redis:latest
+    container_name: redis_container
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: ["redis-server", "--appendonly", "yes"]
+    restart: unless-stopped
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]           # Returns PONG on success
+      interval: 10s                                # Check every 10 seconds
+      timeout: 5s                                  # Command timeout
+      retries: 5                                   # Retry 5 times before marking unhealthy
+      start_period: 10s                            # Give Redis time to start
+      start_interval: 5s                           # More frequent checks during startup
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  redis_data:
