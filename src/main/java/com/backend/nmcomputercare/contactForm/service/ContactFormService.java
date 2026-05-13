@@ -2,7 +2,7 @@ package com.backend.nmcomputercare.contactForm.service;
 
 import com.backend.nmcomputercare.contactForm.dtos.*;
 import com.backend.nmcomputercare.contactForm.entity.ContactForm;
-import com.backend.nmcomputercare.contactForm.mailing.dto.ContactFormEmailEvent;
+import com.backend.nmcomputercare.contactForm.mailing.dto.*;
 import com.backend.nmcomputercare.contactForm.repository.ContactFormRepository;
 import com.backend.nmcomputercare.contactForm.validator.ContactFormValidator;
 import com.backend.nmcomputercare.utils.*;
@@ -13,14 +13,14 @@ import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import jakarta.transaction.Transactional;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.annotation.Lazy;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -64,15 +64,6 @@ public class ContactFormService implements ExecuteService {
     private final ExceptionAdvice           advice;
     private final ContactFormValidator      validator;
 
-    /**
-     * Self-reference injected lazily so that calls to {@link #sendCustomerRequest}
-     * pass through the Spring AOP proxy, allowing {@code @RateLimiter} to intercept
-     * them.  Without this, internal {@code this.} calls bypass the proxy entirely
-     * and the annotation has no effect.
-     */
-    @Lazy
-    @Setter(onMethod_ = @Autowired)
-    private ContactFormService self;
 
     // ══════════════════════════════════════════════════════════════════════════
     //  Public dispatch entry-point (ExecuteService contract)
@@ -89,7 +80,7 @@ public class ContactFormService implements ExecuteService {
 
             return switch (serviceName) {
                 // Route through self-proxy so @RateLimiter AOP interception fires.
-                case "sendCustomerRequest"          -> self.sendCustomerRequest(request);
+                case "sendCustomerRequest"          -> ((ContactFormService) AopContext.currentProxy()).sendCustomerRequest(request);
                 case "findAllCustomerRequest"       -> findAllCustomerRequest(toPageable(request));
                 case "findCustomerRequestById"      -> findCustomerRequestById(request);
                 case "findCustomerRequestByEmail"   -> findCustomerRequestByEmail(request);
@@ -323,7 +314,7 @@ public class ContactFormService implements ExecuteService {
                             .build());
                 });
 
-        publisher.publishEvent(ContactFormEmailEvent.builder()
+        publisher.publishEvent(ContactFormConfirmationEvent.builder()
                 .email(req.getEmail())
                 .emailSentTo(req.getEmail())
                 .name(req.getName())

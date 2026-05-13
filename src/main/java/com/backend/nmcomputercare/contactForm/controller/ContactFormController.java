@@ -1,8 +1,9 @@
 package com.backend.nmcomputercare.contactForm.controller;
 import com.backend.nmcomputercare.contactForm.dtos.*;
 import com.backend.nmcomputercare.contactForm.service.ContactFormService;
+import com.backend.nmcomputercare.utils.ExceptionAdvice;
+import com.backend.nmcomputercare.utils.ExecService;
 import com.backend.nmcomputercare.utils.ResponseContract;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
  
 import java.util.List;
+import java.util.concurrent.ExecutorService;
  
 /**
  * REST controller for all contact-form operations.
@@ -22,12 +24,18 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/v1/contact-forms")
-@RequiredArgsConstructor
-public class ContactFormController {
+public class ContactFormController extends ExecService {
  
     private static final Logger logger = LoggerFactory.getLogger(ContactFormController.class);
  
     private final ContactFormService service;
+
+    public ContactFormController(ContactFormService service,
+                                 ExecutorService controllerExecutorService,
+                                 ExceptionAdvice advice) {
+        super(controllerExecutorService, advice);
+        this.service = service;
+    }
  
     // ══════════════════════════════════════════════════════════════════════════
     //  POST  /api/v1/contact-forms
@@ -47,7 +55,7 @@ public class ContactFormController {
         logger.info("POST /contact-forms | email={}", maskEmail(request.getEmail()));
  
         List<? extends ResponseContract> response =
-                service.callable("sendCustomerRequest", request);
+                exec(service, "sendCustomerRequest", request);
  
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -95,7 +103,7 @@ public class ContactFormController {
         // findAllCustomerRequest always produces ContactFormResponse instances.
         @SuppressWarnings("unchecked")
         List<ContactFormResponse> content =
-                (List<ContactFormResponse>) service.callable("findAllCustomerRequest", request);
+                (List<ContactFormResponse>) exec(service, "findAllCustomerRequest", request);
  
         // Compute pagination metadata for the response envelope.
         int safeSize      = (size > 0 && size <= 100) ? size : 20;
@@ -129,13 +137,13 @@ public class ContactFormController {
     public ResponseEntity<List<? extends ResponseContract>> findById(
             @PathVariable Long id) {
  
-        logger.info(" xGET /contact-forms/{}", id);
+        logger.info("GET /contact-forms/{}", id);
  
         FindContactFormByIdRequest request = FindContactFormByIdRequest.builder()
                 .id(id)
                 .build();
  
-        return ResponseEntity.ok(service.callable("findCustomerRequestById", request));
+        return ResponseEntity.ok(exec(service, "findCustomerRequestById", request));
     }
  
     // ══════════════════════════════════════════════════════════════════════════
@@ -158,7 +166,7 @@ public class ContactFormController {
                 .email(email)
                 .build();
  
-        return ResponseEntity.ok(service.callable("findCustomerRequestByEmail", request));
+        return ResponseEntity.ok(exec(service, "findCustomerRequestByEmail", request));
     }
  
     // ══════════════════════════════════════════════════════════════════════════
@@ -181,7 +189,7 @@ public class ContactFormController {
                 .numbers(numbers)
                 .build();
  
-        return ResponseEntity.ok(service.callable("findCustomerRequestByNumbers", request));
+        return ResponseEntity.ok(exec(service, "findCustomerRequestByNumbers", request));
     }
  
     // ══════════════════════════════════════════════════════════════════════════

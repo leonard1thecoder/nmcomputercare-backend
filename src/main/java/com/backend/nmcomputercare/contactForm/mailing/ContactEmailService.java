@@ -1,6 +1,6 @@
 package com.backend.nmcomputercare.contactForm.mailing;
 
-
+import java.io.UnsupportedEncodingException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.slf4j.Logger;
@@ -62,14 +62,49 @@ public class ContactEmailService {
         // ── Build MIME message ────────────────────────────────────────────────
         MimeMessage mime = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mime, true, "UTF-8");
-
+        try{
+		helper.setFrom("leonard1thecoder@gmail.com", "NM Computer Care"); // ← ADD THIS
+		}catch(UnsupportedEncodingException e){
+			
+		}
         helper.setTo(sentToEmail);
         helper.setSubject("📬 New Enquiry from " + name + " – NM Computer Care");
         helper.setText(htmlBody, true);   // true = HTML content
 
         // ── Send ─────────────────────────────────────────────────────────────
         mailSender.send(mime);
-    }
+    
+	
+}
+
+public void sendClientConfirmation(String name,
+                                   String email,
+                                   String phone,
+                                   String service,
+                                   String message,
+                                   String sentToEmail
+								  ) throws MessagingException, UnsupportedEncodingException {
+
+    Context ctx = new Context();
+    ctx.setVariable("name",        name);
+    ctx.setVariable("email",       email);
+    ctx.setVariable("phone",       phone);
+    ctx.setVariable("service",     service);
+    ctx.setVariable("message",     message);
+    ctx.setVariable("submittedAt", LocalDateTime.now());
+
+    String htmlBody = templateEngine.process("contact-form-confirmation", ctx);
+
+    MimeMessage mime = mailSender.createMimeMessage();
+    MimeMessageHelper helper = new MimeMessageHelper(mime, true, "UTF-8");
+
+		helper.setFrom("leonard1thecoder@gmail.com", "NM Computer Care"); // ← ADD THIS
+		    helper.setTo(sentToEmail);   // ← sends to the visitor
+    helper.setSubject("✅ We've received your enquiry – NM Computer Care");
+    helper.setText(htmlBody, true);
+
+    mailSender.send(mime);
+}
 
 
 }

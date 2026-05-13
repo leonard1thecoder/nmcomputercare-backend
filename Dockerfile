@@ -1,20 +1,22 @@
-# Use a slim, secure base (match your Java version: 17/21/etc.)
-FROM eclipse-temurin:21-jre-alpine
-
-# Non-root user for security
-RUN addgroup -S appgroup && adduser -S -D -h /home/appuser -s /bin/sh -G appgroup appuser
-
-
+# Stage 1: Build
+FROM maven:3.9-eclipse-temurin-25 AS builder
 WORKDIR /app
 
-# Copy the JAR built by Maven
-COPY target/users_microservice-*.jar app.jar
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
 
-# Switch to non-root user
-USER appuser
+COPY src ./src
+RUN mvn clean package -DskipTests
 
-# Your app's port (change if not 8080)
-EXPOSE ${APP_EXTERNAL_PORT}
+# Stage 2: Run
+FROM eclipse-temurin:25-jre-alpine
+WORKDIR /app
 
-# Optional: add JVM flags, e.g. for memory or profiles
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+RUN addgroup -S spring && adduser -S spring -G spring
+USER spring
+
+COPY --from=builder /app/target/*.jar app.jar
+
+EXPOSE 8080
+
+ENTRYPOINT ["java", "-jar", "app.jar"]

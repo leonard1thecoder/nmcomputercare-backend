@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Subscription Confirmed – NM Computer Care</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f1f5f9;font-family:'Segoe UI',Helvetica,Arial,sans-serif;">
+
+  <!-- Outer wrapper -->
+  <table width="100%" cellpadding="0" cellspacing="0" border="0"
+         style="background-color:#f1f5f9;padding:40px 16px;">
+    <tr>
+      <td align="center">
+
+        <!-- ═══════════════════════════════════════════════════════════
+             EMAIL CARD
+        ════════════════════════════════════════════════════════════ -->
+        <table width="600" cellpadding="0" cellspacing="0" border="0"
+               style="max-width:600px;width:100%;border-radius:24px;overflow:hidden;
+                      box-shadow:0 24px 60px rgba(15,23,42,0.18);border:1px solid #e2e8f0;">
+
+          <!-- ─── HERO HEADER ──────────────────────────────────────── -->
+          <tr>
+            <td style="background:linear-gradient(135deg,#0f172a 0%,#111827 100%);padding:0;">
+
+              <!-- Top decoration bar -->
+              <div style="height:3px;background:linear-gradient(90deg,#fbbf24,#f59e0b,#fbbf24);font-size:0;line-height:0;">&nbsp;</div>
+
+              <table width="100%" cellpadding="0" cellspacing="0" border="0"
+                     style="padding:36px 40px 32px;">
+                <tr>
+                  <td>
+                    <!-- Logo -->
+                    <img
+                      src="https://raw.githubusercontent.com/leonard1thecoder/NM-Computer-Care/main/ChatGPT%20Image%20Apr%2028,%202026,%2003_12_20%20PM.png"
+                      alt="NM Computer Care"
+                      width="60"
+                      style="display:block;border-radius:14px;margin-bottom:20px;" />
+
+                    <!-- Status pill -->
+                    <div style="display:inline-block;background:rgba(34,197,94,0.15);
+                                border:1px solid rgba(34,197,94,0.35);border-radius:999px;
+                                padding:6px 14px;margin-bottom:16px;">
+                      <span style="color:#86efac;font-size:11px;font-weight:700;
+                                   letter-spacing:0.12em;text-transform:uppercase;">
+                        ✅ &nbsp;Subscription Confirmed
+                      </span>
+                    </div>
+
+                    <h1 style="margin:0 0 10px;color:#ffffff;font-size:28px;
+                               font-weight:800;letter-spacing:-0.04em;line-height:1.15;">
+                      You're officially in,<br/>
+                      <span th:text="${firstName}" style="color:#fbbf24;">Friend</span>!
+                    </h1>
+                    <p style="margin:0;color:#94a3b8;font-size:14px;line-height:1.7;">
+                      Your email has been verified and your NM Computer Care<br/>
+                      subscription is now fully active. Welcome to the family.
+                    </p>
+                  </td>
+
+                  <!-- Right: subscription tier badge -->
+                  <td align="right" valign="top" style="padding-left:20px;white-space:nowrap;">
+                    <div style="background:linear-gradient(135deg,rgba(251,191,36,0.18),rgba(245,158,11,0.08));
+                                border:1px solid rgba(251,191,36,0.4);
+                                border-radius:16px;padding:14px 18px;text-align:center;min-width:100px;">
+                      <span style="display:block;color:#fbbf24;font-size:18px;margin-bottom:4px;">👑</span>
+                      <span style="display:block;color:#fde68a;font-size:11px;font-weight:800;
+                                   text-transform:uppercase;letter-spacing:0.12em;">Premium</span>
+                      <span style="display:block;color:#f59e0b;font-size:10px;
+                                   font-weight:600;margin-top:2px;">Subscriber</span>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- ─── GOLD ACCENT STRIPE ────────────────────────────────── -->
+          <tr>
+            <td style="background:linear-gradient(90deg,#fbbf24,#f59e0b);
+                       height:4px;font-size:0;line-height:0;">&nbsp;</td>
+          </tr>
+
+          <!-- ─── CONFIRMED ILLUSTRATION SECTION ───────────────────── -->
+          <tr>
+            <td style="background:#ffffff;padding:40px 40px 32px;">
+
+              <!-- Confirmed box -->
+              <div style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);
+                          border:1px solid #86efac;border-radius:20px;
+                          padding:28px 24px;text-align:center;margin-bottom:32px;">
+                <div style="font-size:52px;margin-bottom:12px;">🎉</div>
+                <h2 style="margin:0 0 8px;color:#14532d;font-size:20px;
+                            font-weight:800;letter-spacing:-0.02em;">
+                  Your Account Is Now Active
+                </h2>
+                <p style="margin:0 0 6px;color:#166534;font-size:14px;line-height:1.65;">
+                  All subscriber benefits are unlocked and ready to use.<br/>
+                  Here's a summary of what you now have access to.
+                </p>
+              </div>
+
+              <!-- ── What you unlock heading ── -->
+              <p style="margin:0 0 16px;color:#2563eb;font-size:11px;font-weight:800;
+                         letter-spacing:0.14em;text-transform:uppercase;">
+                🔓 &nbsp;Your Active Benefits
+              </p>
+
+              <!-- Benefit 1: Newsletter -->
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:12px;">
+                <tr>
+                  <td style="background:#f8fafc;border:1px solid #e2e8f0;
+                              border-radius:16px;padding:16px 18px;vertical-align:top;">
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td width="44" style="vertical-align:top;padding-right:14px;">
+                          <div style="width:40px;height:40px;border-radius:12px;
+                                      background:linear-gradient(135deg,#dbeafe,#e0e7ff);
+                                      text-align:center;line-height:40px;font-size:18px;">
+                            📰
+                          </div>
+                        </td>
+                        <td style="vertical-align:top;">
+                          <p style="margin:0 0 3px;color:#0f172a;font-size:14px;font-weight:800;">
+                            Monthly Tech Newsletter
+                          </p>
+                          <p style="margin:0;color:#64748b;font-size:13px;line-height:1.6;">
+                            Curated IT tips, security alerts, and tech news delivered
+                            straight to your inbox every month.
+                          </p>
+                        </td>
+                        <td align="right" valign="middle" style="padding-left:12px;white-space:nowrap;">
+                          <span style="display:inline-block;background:rgba(34,197,94,0.1);
+                                       color:#16a34a;border-radius:999px;
+                                       padding:4px 10px;font-size:11px;font-weight:800;">
+                            ACTIVE
+                          </span>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Benefit 2: Exclusive Offers -->
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:12px;">
+                <tr>
+                  <td style="background:#f8fafc;border:1px solid #e2e8f0;
+                              border-radius:16px;padding:16px 18px;vertical-align:top;">
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td width="44" style="vertical-align:top;padding-right:14px;">
+                          <div style="width:40px;height:40px;border-radius:12px;
+                                      background:linear-gradient(135deg,#fef9c3,#fde68a);
+                                      text-align:center;line-height:40px;font-size:18px;">
+                            🏷️
+                          </div>
+                        </td>
+                        <td style="vertical-align:top;">
+                          <p style="margin:0 0 3px;color:#0f172a;font-size:14px;font-weight:800;">
+                            Subscriber-Only Discounts
+                          </p>
+                          <p style="margin:0;color:#64748b;font-size:13px;line-height:1.6;">
+                            Exclusive promotional pricing on repairs, upgrades,
+                            and service packages — available only to verified subscribers.
+                          </p>
+                        </td>
+                        <td align="right" valign="middle" style="padding-left:12px;white-space:nowrap;">
+                          <span style="display:inline-block;background:rgba(251,191,36,0.15);
+                                       color:#b45309;border-radius:999px;
+                                       padding:4px 10px;font-size:11px;font-weight:800;">
+                            ACTIVE
+                          </span>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Benefit 3: Priority Support -->
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:12px;">
+                <tr>
+                  <td style="background:#f8fafc;border:1px solid #e2e8f0;
+                              border-radius:16px;padding:16px 18px;vertical-align:top;">
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td width="44" style="vertical-align:top;padding-right:14px;">
+                          <div style="width:40px;height:40px;border-radius:12px;
+                                      background:linear-gradient(135deg,#dcfce7,#bbf7d0);
+                                      text-align:center;line-height:40px;font-size:18px;">
+                            ⚡
+                          </div>
+                        </td>
+                        <td style="vertical-align:top;">
+                          <p style="margin:0 0 3px;color:#0f172a;font-size:14px;font-weight:800;">
+                            Priority Support Queue
+                          </p>
+                          <p style="margin:0;color:#64748b;font-size:13px;line-height:1.6;">
+                            Your repair requests are reviewed and responded to first —
+                            no waiting around.
+                          </p>
+                        </td>
+                        <td align="right" valign="middle" style="padding-left:12px;white-space:nowrap;">
+                          <span style="display:inline-block;background:rgba(37,99,235,0.09);
+                                       color:#2563eb;border-radius:999px;
+                                       padding:4px 10px;font-size:11px;font-weight:800;">
+                            ACTIVE
+                          </span>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Benefit 4: IT Health Tips -->
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:32px;">
+                <tr>
+                  <td style="background:#f8fafc;border:1px solid #e2e8f0;
+                              border-radius:16px;padding:16px 18px;vertical-align:top;">
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td width="44" style="vertical-align:top;padding-right:14px;">
+                          <div style="width:40px;height:40px;border-radius:12px;
+                                      background:linear-gradient(135deg,#fce7f3,#fbcfe8);
+                                      text-align:center;line-height:40px;font-size:18px;">
+                            💡
+                          </div>
+                        </td>
+                        <td style="vertical-align:top;">
+                          <p style="margin:0 0 3px;color:#0f172a;font-size:14px;font-weight:800;">
+                            PC Health &amp; Maintenance Tips
+                          </p>
+                          <p style="margin:0;color:#64748b;font-size:13px;line-height:1.6;">
+                            Seasonal maintenance reminders and practical DIY tips
+                            to keep your devices running at peak performance year-round.
+                          </p>
+                        </td>
+                        <td align="right" valign="middle" style="padding-left:12px;white-space:nowrap;">
+                          <span style="display:inline-block;background:rgba(34,197,94,0.1);
+                                       color:#16a34a;border-radius:999px;
+                                       padding:4px 10px;font-size:11px;font-weight:800;">
+                            ACTIVE
+                          </span>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- ── Visit Website CTA ── -->
+              <div style="text-align:center;">
+                <a href="https://nmcomputercare.co.za"
+                   style="display:inline-block;background:linear-gradient(135deg,#0f172a,#1e1b4b);
+                          color:#fbbf24;font-size:15px;font-weight:800;text-decoration:none;
+                          padding:16px 44px;border-radius:16px;
+                          box-shadow:0 10px 30px rgba(15,23,42,0.3);
+                          letter-spacing:-0.01em;border:1px solid rgba(251,191,36,0.35);">
+                  🚀 &nbsp; Explore NM Computer Care
+                </a>
+                <p style="margin:14px 0 0;color:#9ca3af;font-size:12px;">
+                  Questions? Reply to this email or visit
+                  <a href="https://nmcomputercare.co.za"
+                     style="color:#2563eb;text-decoration:none;font-weight:700;">
+                    nmcomputercare.co.za
+                  </a>
+                </p>
+              </div>
+
+            </td>
+          </tr>
+
+          <!-- ─── GOLD ACCENT STRIPE ────────────────────────────────── -->
+          <tr>
+            <td style="background:linear-gradient(90deg,#f59e0b,#fbbf24);
+                       height:4px;font-size:0;line-height:0;">&nbsp;</td>
+          </tr>
+
+          <!-- ─── DARK FOOTER ──────────────────────────────────────── -->
+          <tr>
+            <td style="background:linear-gradient(135deg,#0f172a 0%,#111827 100%);
+                       padding:28px 40px 32px;">
+              <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="vertical-align:top;">
+                    <p style="margin:0 0 4px;color:#e2e8f0;font-size:14px;font-weight:800;">
+                      NM Computer Care
+                    </p>
+                    <p style="margin:0;color:#64748b;font-size:12px;line-height:1.7;">
+                      Mpumalanga, South Africa<br/>
+                      You received this because you verified at nmcomputercare.co.za.<br/>
+                      <a href="#" style="color:#94a3b8;text-decoration:underline;">Unsubscribe</a>
+                      &nbsp;·&nbsp;
+                      <a href="#" style="color:#94a3b8;text-decoration:underline;">Privacy Policy</a>
+                    </p>
+                  </td>
+                  <td align="right" valign="middle" style="padding-left:20px;">
+                    <div>
+                      <span style="color:#fbbf24;font-size:16px;letter-spacing:1px;">★★★★★</span>
+                      <p style="margin:4px 0 0;color:#64748b;font-size:10px;text-align:right;">
+                        Trusted IT Services
+                      </p>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+        </table>
+        <!-- / Email card -->
+
+        <!-- Bottom note -->
+        <p style="margin:20px 0 0;color:#94a3b8;font-size:11px;text-align:center;">
+          © 2026 NM Computer Care &nbsp;·&nbsp; Mpumalanga, South Africa
+        </p>
+
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>

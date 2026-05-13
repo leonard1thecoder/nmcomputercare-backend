@@ -11,8 +11,7 @@ import java.util.List;
 @Repository
 public interface NewsletterRepository extends JpaRepository<Newsletter, Long> {
 
-    /** Returns all newsletters belonging to a given category (e.g. "PROMO"). */
-    List<Newsletter> findByCategory(String category);
+
 
     /** Returns all newsletters with the given publication status. */
     List<Newsletter> findByStatus(byte status);

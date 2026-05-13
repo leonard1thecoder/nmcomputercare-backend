@@ -17,6 +17,7 @@ import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
@@ -66,14 +67,6 @@ public class NewsletterService implements ExecuteService {
     private final ExceptionAdvice      advice;
     private final NewsletterValidator validator;
 
-    /**
-     * Self-reference injected lazily so internal calls to
-     * {@link #createNewsletter} pass through the AOP proxy and
-     * {@code @RateLimiter} fires correctly.
-     */
-    @Lazy
-    @Setter(onMethod_ = @Autowired)
-    private NewsletterService self;
 
     // ══════════════════════════════════════════════════════════════════════════
     //  Dispatcher
@@ -90,7 +83,7 @@ public class NewsletterService implements ExecuteService {
 
             return switch (serviceName) {
                 // Route create through self-proxy so @RateLimiter AOP fires.
-                case "createNewsletter"          -> self.createNewsletter(request);
+                case "createNewsletter" -> ((NewsletterService) AopContext.currentProxy()).createNewsletter(request);
                 case "findAllNewsletters"        -> findAllNewsletters(toPageable(request));
                 case "findNewsletterById"        -> findNewsletterById(request);
                 default -> {
