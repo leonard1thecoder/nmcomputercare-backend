@@ -5,33 +5,28 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
-
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
 @Data
 public class ContactFormRequest implements RequestContract {
 
-    @JsonProperty("sender_name")
+    @JsonProperty("name")
     private String name;
-    @JsonProperty("senser_email_address")
 
+    @JsonProperty("email")
     private String email;
-    @JsonProperty("sender_numbers")
 
+    @JsonProperty("phone")
     private String numbers;
-    @JsonProperty("sender_requested_service")
 
+    @JsonProperty("service")
     private String service;
-    @JsonProperty("sender_message")
 
+    @JsonProperty("message")
     private String message;
-    @JsonProperty("message_sent_date")
-
-    private LocalDateTime sentDate;
-
-    @JsonProperty("is_message_responded")
-    private Byte status;
 
 }

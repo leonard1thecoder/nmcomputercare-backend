@@ -1,26 +1,38 @@
+version: "3.9"
+
 services:
   nm-computercare-backend:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: leonard1thecoder/nm-computercare-backend:latest
+    image: leonard1thecoder/springboot-app:latest
+    container_name: nm-computercare-backend
     environment:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-dev}
       SPRING_REDIS_HOST: ${REDIS_HOST:-redis}
       SPRING_REDIS_PORT: ${REDIS_PORT:-6379}
-      SUPABASE_URL: ${SUPABASE_URL}      # ← pulled from .env
+      SUPABASE_URL: ${SUPABASE_URL}
       MAIL_USERNAME: ${MAIL_USERNAME}
       MAIL_PASSWORD: ${MAIL_PASSWORD}
       PORT: ${CONTAINER_PORT:-9098}
     ports:
-      - "${APP_EXTERNAL_PORT:-8080}:${CONTAINER_PORT:-9098}"                     # Adjust if needed
+      - "${APP_EXTERNAL_PORT:-8080}:${CONTAINER_PORT:-9098}"
     depends_on:
       redis:
-        condition: service_healthy      # Waits until Redis reports healthy
+        condition: service_healthy
     restart: unless-stopped
     networks:
       - app-network
 
+  nextjs-frontend:
+    image: leonard1thecoder/nextjs-bun-app:latest
+    container_name: nextjs-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - API_URL=http://nm-computercare-backend:9098
+    depends_on:
+      - nm-computercare-backend
+    restart: unless-stopped
+    networks:
+      - app-network
 
   redis:
     image: redis:latest
@@ -34,12 +46,12 @@ services:
     networks:
       - app-network
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]           # Returns PONG on success
-      interval: 10s                                # Check every 10 seconds
-      timeout: 5s                                  # Command timeout
-      retries: 5                                   # Retry 5 times before marking unhealthy
-      start_period: 10s                            # Give Redis time to start
-      start_interval: 5s                           # More frequent checks during startup
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+      start_interval: 5s
 
 networks:
   app-network:

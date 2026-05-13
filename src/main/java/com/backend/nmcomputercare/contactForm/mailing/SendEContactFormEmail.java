@@ -1,6 +1,6 @@
 package com.backend.nmcomputercare.contactForm.mailing;
 
-import com.backend.nmcomputercare.contactForm.mailing.dto.ContactFormEmailEvent;
+import com.backend.nmcomputercare.contactForm.mailing.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -21,5 +21,16 @@ public class SendEContactFormEmail {
             throw new RuntimeException(e);
         }
     }
+	
+	@Async
+    @EventListener
+    public void sendClientConfirmation(ContactFormConfirmationEvent event) {
+        try {
+            mailService.sendClientConfirmation( event.getName(), event.getEmail(), event.getPhone(), event.getService(), event.getMessage(), event.getEmailSentTo());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
 }

@@ -3,9 +3,10 @@ package com.backend.nmcomputercare.subscribe.controller;
 
 import com.backend.nmcomputercare.subscribe.dtos.*;
 import com.backend.nmcomputercare.subscribe.service.SubscriptionService;
+import com.backend.nmcomputercare.utils.ExceptionAdvice;
+import com.backend.nmcomputercare.utils.ExecService;
 import com.backend.nmcomputercare.utils.ResponseContract;
 
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 /**
  * REST controller for all subscription operations.
@@ -21,12 +23,18 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/v1/subscriptions")
-@RequiredArgsConstructor
-public class SubscriptionController {
+public class SubscriptionController extends ExecService {
 
     private static final Logger logger = LoggerFactory.getLogger(SubscriptionController.class);
 
     private final SubscriptionService service;
+
+    public SubscriptionController(SubscriptionService service,
+                                  ExecutorService controllerExecutorService,
+                                  ExceptionAdvice advice) {
+        super(controllerExecutorService, advice);
+        this.service = service;
+    }
 
     // ══════════════════════════════════════════════════════════════════════════
     //  POST  /api/v1/subscriptions
@@ -44,7 +52,7 @@ public class SubscriptionController {
 
         logger.info("POST /subscriptions | email={}", maskEmail(request.getEmail()));
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(service.callable("subscribe", request));
+                .body(exec(service, "subscribe", request));
     }
 
     // ══════════════════════════════════════════════════════════════════════════
@@ -60,7 +68,7 @@ public class SubscriptionController {
              @RequestBody UnsubscribeRequest request) {
 
         logger.info("DELETE /subscriptions | email={}", maskEmail(request.getEmail()));
-        return ResponseEntity.ok(service.callable("unsubscribe", request));
+        return ResponseEntity.ok(exec(service, "unsubscribe", request));
     }
 
     // ══════════════════════════════════════════════════════════════════════════
@@ -100,7 +108,7 @@ public class SubscriptionController {
 
         @SuppressWarnings("unchecked")
         List<SubscriptionResponse> content =
-                (List<SubscriptionResponse>) service.callable("findAllSubscriptions", request);
+                (List<SubscriptionResponse>) exec(service, "findAllSubscriptions", request);
 
         int  safeSize   = (size > 0 && size <= 100) ? size : 20;
         long totalItems = content.size();
@@ -146,7 +154,7 @@ public class SubscriptionController {
 
         @SuppressWarnings("unchecked")
         List<SubscriptionResponse> content =
-                (List<SubscriptionResponse>) service.callable("findActiveSubscriptions", request);
+                (List<SubscriptionResponse>) exec(service, "findActiveSubscriptions", request);
 
         int  safeSize   = (size > 0 && size <= 100) ? size : 20;
         long totalItems = content.size();
@@ -178,7 +186,7 @@ public class SubscriptionController {
             @PathVariable String email) {
 
         logger.info("GET /subscriptions/email/{}", maskEmail(email));
-        return ResponseEntity.ok(service.callable("findSubscriptionByEmail",
+        return ResponseEntity.ok(exec(service, "findSubscriptionByEmail",
                 FindSubscriptionByEmailRequest.builder().email(email).build()));
     }
 

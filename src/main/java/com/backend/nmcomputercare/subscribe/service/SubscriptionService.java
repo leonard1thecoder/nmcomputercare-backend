@@ -1,6 +1,5 @@
 package com.backend.nmcomputercare.subscribe.service;
 
-
 import com.backend.nmcomputercare.subscribe.dtos.FindSubscriptionByEmailRequest;
 import com.backend.nmcomputercare.subscribe.dtos.SubscribeRequest;
 import com.backend.nmcomputercare.subscribe.dtos.SubscriptionResponse;
@@ -16,13 +15,11 @@ import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import jakarta.transaction.Transactional;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -56,26 +53,17 @@ public class SubscriptionService implements ExecuteService {
     private static final String REDIS_ACTIVE   = REDIS_NS + "ACTIVE";
 
     // ── Shared messages ─────────────────────────────────────────────────────────
-    private static final String BAD_REQUEST_MSG = "Request contract type mismatch.";
-    private static final String BAD_REQUEST_RES = "Ensure the correct RequestContract subtype is passed for this service.";
-    private static final String NOT_FOUND_RES   = "No matching records exist for the given criteria.";
+    private static final String BAD_REQUEST_MSG     = "Request contract type mismatch.";
+    private static final String BAD_REQUEST_DETAILS = "Ensure the correct RequestContract subtype is passed for this service.";
+    private static final String NOT_FOUND_DETAILS   = "No matching records exist for the given criteria.";
 
     @Value("${redis.setting.enable:false}")
     private boolean enableRedisUse;
 
     private final SubscriptionRepository repository;
     private final RedisService           redisService;
-    private final ExceptionAdvice        advice;
-    private final SubscriptionValidator validator;
+    private final SubscriptionValidator  validator;
 
-    /**
-     * Lazily injected self-reference so that {@code @RateLimiter} annotations
-     * on {@link #subscribe} and {@link #unsubscribe} are honoured by the
-     * Spring AOP proxy when called from within this class.
-     */
-    @Lazy
-    @Setter(onMethod_ = @Autowired)
-    private SubscriptionService self;
 
     // ══════════════════════════════════════════════════════════════════════════
     //  Dispatcher
@@ -92,17 +80,18 @@ public class SubscriptionService implements ExecuteService {
 
             return switch (serviceName) {
                 // Route writes through the self-proxy so @RateLimiter fires.
-                case "subscribe"                      -> self.subscribe(request);
-                case "unsubscribe"                    -> self.unsubscribe(request);
-                case "findAllSubscriptions"           -> findAllSubscriptions(toPageable(request));
-                case "findSubscriptionByEmail"        -> findSubscriptionByEmail(request);
-                case "findActiveSubscriptions"        -> findActiveSubscriptions(toPageable(request));
+                case "subscribe"   -> ((SubscriptionService) AopContext.currentProxy()).subscribe(request);
+                case "unsubscribe" -> ((SubscriptionService) AopContext.currentProxy()).unsubscribe(request);
+
+                case "findAllSubscriptions"    -> findAllSubscriptions(toPageable(request));
+                case "findSubscriptionByEmail" -> findSubscriptionByEmail(request);
+                case "findActiveSubscriptions" -> findActiveSubscriptions(toPageable(request));
                 default -> {
                     String msg = "Service name not found: " + serviceName;
                     logger.warn("Unknown service requested | service={} correlationId={}", serviceName, correlationId);
-                    throw advice.throwExceptionAndAdvice(
-                            new ServiceNameNotFoundException(msg), msg,
-                            "Ensure the service name matches one of the defined cases.");
+                    ExceptionHandlerReporter.setResolveIssueDetails("Ensure the service name matches one of the defined cases.");
+                    ExceptionHandlerReporter.setExceptionDate(LocalDateTime.now());
+                    throw new ServiceNameNotFoundException(msg);
                 }
             };
         } finally {
@@ -141,9 +130,9 @@ public class SubscriptionService implements ExecuteService {
             Subscription sub = existing.get();
             if (sub.isActive()) {
                 String msg = "Email is already subscribed: " + castedRequest.getEmail();
-                throw advice.throwExceptionAndAdvice(
-                        new IncorrectRequestSentException(msg), msg,
-                        "This email address is already an active subscriber.");
+                ExceptionHandlerReporter.setResolveIssueDetails("This email address is already an active subscriber.");
+                ExceptionHandlerReporter.setExceptionDate(LocalDateTime.now());
+                throw new IncorrectRequestSentException(msg);
             }
             // Re-activate.
             sub.setActive(true);
@@ -157,7 +146,6 @@ public class SubscriptionService implements ExecuteService {
         }
 
         Subscription entity = Subscription.builder()
-                .name(castedRequest.getName())
                 .email(castedRequest.getEmail())
                 .subscribedDate(LocalDateTime.now())
                 .active(true)
@@ -186,15 +174,16 @@ public class SubscriptionService implements ExecuteService {
         Subscription sub = repository.findByEmail(castedRequest.getEmail())
                 .orElseThrow(() -> {
                     String msg = "No subscription found for email: " + castedRequest.getEmail();
-                    return advice.throwExceptionAndAdvice(
-                            new IncorrectRequestSentException(msg), msg, NOT_FOUND_RES);
+                    ExceptionHandlerReporter.setResolveIssueDetails(NOT_FOUND_DETAILS);
+                    ExceptionHandlerReporter.setExceptionDate(LocalDateTime.now());
+                    return new IncorrectRequestSentException(msg);
                 });
 
         if (!sub.isActive()) {
-            String msg = "Subscription is already inactive for email: " + castedRequest.getEmail();
-            throw advice.throwExceptionAndAdvice(
-                    new IncorrectRequestSentException(msg), msg,
-                    "This email address is not currently subscribed.");
+            ExceptionHandlerReporter.setResolveIssueDetails("This email address is not currently subscribed.");
+            ExceptionHandlerReporter.setExceptionDate(LocalDateTime.now());
+            throw new IncorrectRequestSentException(
+                    "Subscription is already inactive for email: " + castedRequest.getEmail());
         }
 
         sub.setActive(false);
@@ -257,8 +246,10 @@ public class SubscriptionService implements ExecuteService {
         Optional<Subscription> found = repository.findByEmail(castedRequest.getEmail());
         if (found.isEmpty()) {
             logger.warn("No subscription found | email={}", maskEmail(castedRequest.getEmail()));
-            String msg = "No subscription found for email: " + castedRequest.getEmail();
-            throw advice.throwExceptionAndAdvice(new IncorrectRequestSentException(msg), msg, NOT_FOUND_RES);
+            ExceptionHandlerReporter.setResolveIssueDetails(NOT_FOUND_DETAILS);
+            ExceptionHandlerReporter.setExceptionDate(LocalDateTime.now());
+            throw new IncorrectRequestSentException(
+                    "No subscription found for email: " + castedRequest.getEmail());
         }
 
         List<SubscriptionResponse> result = toResponseList(found.stream().toList());
@@ -302,20 +293,18 @@ public class SubscriptionService implements ExecuteService {
             RequestContract request, RequestNotPermitted ex) {
 
         logger.warn("Rate limit triggered | limiter=subscriptionCreate message={}", ex.getMessage());
-        throw advice.throwExceptionAndAdvice(
-                new IncorrectRequestSentException("Too many subscription requests."),
-                "Too many subscription requests.",
-                "You have exceeded the allowed subscription rate. Please wait before trying again.");
+        ExceptionHandlerReporter.setResolveIssueDetails("You have exceeded the allowed subscription rate. Please wait before trying again.");
+        ExceptionHandlerReporter.setExceptionDate(LocalDateTime.now());
+        throw new IncorrectRequestSentException("Too many subscription requests.");
     }
 
     public List<SubscriptionResponse> unsubscribeFallback(
             RequestContract request, RequestNotPermitted ex) {
 
         logger.warn("Rate limit triggered | limiter=subscriptionCancel message={}", ex.getMessage());
-        throw advice.throwExceptionAndAdvice(
-                new IncorrectRequestSentException("Too many unsubscribe requests."),
-                "Too many unsubscribe requests.",
-                "You have exceeded the allowed cancellation rate. Please wait before trying again.");
+        ExceptionHandlerReporter.setResolveIssueDetails("You have exceeded the allowed cancellation rate. Please wait before trying again.");
+        ExceptionHandlerReporter.setExceptionDate(LocalDateTime.now());
+        throw new IncorrectRequestSentException("Too many unsubscribe requests.");
     }
 
     // ══════════════════════════════════════════════════════════════════════════
@@ -367,10 +356,14 @@ public class SubscriptionService implements ExecuteService {
         return org.springframework.data.domain.PageRequest.of(0, 20);
     }
 
+    /**
+     * Centralises the bad-request reporter setup and throw so every
+     * instanceof guard stays a clean one-liner.
+     */
     private RuntimeException badRequestException() {
-        return advice.throwExceptionAndAdvice(
-                new IncorrectRequestSentException(BAD_REQUEST_MSG),
-                BAD_REQUEST_MSG, BAD_REQUEST_RES);
+        ExceptionHandlerReporter.setResolveIssueDetails(BAD_REQUEST_DETAILS);
+        ExceptionHandlerReporter.setExceptionDate(LocalDateTime.now());
+        return new IncorrectRequestSentException(BAD_REQUEST_MSG);
     }
 
     // ── PII masking ────────────────────────────────────────────────────────────

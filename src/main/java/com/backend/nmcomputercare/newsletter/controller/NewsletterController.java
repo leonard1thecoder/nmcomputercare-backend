@@ -2,8 +2,9 @@ package com.backend.nmcomputercare.newsletter.controller;
 
 import com.backend.nmcomputercare.newsletter.dtos.*;
 import com.backend.nmcomputercare.newsletter.service.NewsletterService;
+import com.backend.nmcomputercare.utils.ExceptionAdvice;
+import com.backend.nmcomputercare.utils.ExecService;
 import com.backend.nmcomputercare.utils.ResponseContract;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 /**
  * REST controller for all newsletter operations.
@@ -19,12 +21,18 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/v1/newsletters")
-@RequiredArgsConstructor
-public class NewsletterController {
+public class NewsletterController extends ExecService {
 
     private static final Logger logger = LoggerFactory.getLogger(NewsletterController.class);
 
     private final NewsletterService service;
+
+    public NewsletterController(NewsletterService service,
+                                ExecutorService controllerExecutorService,
+                                ExceptionAdvice advice) {
+        super(controllerExecutorService, advice);
+        this.service = service;
+    }
 
     // ══════════════════════════════════════════════════════════════════════════
     //  POST  /api/v1/newsletters
@@ -41,7 +49,7 @@ public class NewsletterController {
 
         logger.info("POST /newsletters | title={} ", request.getTitle());
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(service.callable("createNewsletter", request));
+                .body(exec(service, "createNewsletter", request));
     }
 
     // ══════════════════════════════════════════════════════════════════════════
@@ -81,7 +89,7 @@ public class NewsletterController {
 
         @SuppressWarnings("unchecked")
         List<NewsletterResponse> content =
-                (List<NewsletterResponse>) service.callable("findAllNewsletters", request);
+                (List<NewsletterResponse>) exec(service, "findAllNewsletters", request);
 
         int  safeSize   = (size > 0 && size <= 100) ? size : 20;
         long totalItems = content.size();
@@ -107,7 +115,7 @@ public class NewsletterController {
             @PathVariable Long id) {
 
         logger.info("GET /newsletters/{}", id);
-        return ResponseEntity.ok(service.callable("findNewsletterById",
+        return ResponseEntity.ok(exec(service, "findNewsletterById",
                 FindNewsletterByIdRequest.builder().id(id).build()));
     }
 

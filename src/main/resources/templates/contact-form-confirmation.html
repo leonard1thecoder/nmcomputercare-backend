@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>We've Received Your Enquiry – NM Computer Care</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f1f5f9;font-family:'Segoe UI',Helvetica,Arial,sans-serif;">
+
+  <!-- Outer wrapper -->
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f1f5f9;padding:40px 16px;">
+    <tr>
+      <td align="center">
+
+        <!-- Email card -->
+        <table width="600" cellpadding="0" cellspacing="0" border="0"
+               style="max-width:600px;width:100%;border-radius:24px;overflow:hidden;
+                      box-shadow:0 24px 60px rgba(15,23,42,0.18);border:1px solid #e2e8f0;">
+
+          <!-- ─── HEADER ─────────────────────────────────────────────── -->
+          <tr>
+            <td style="background:linear-gradient(135deg,#0f172a 0%,#111827 100%);padding:36px 40px 30px;">
+              <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td>
+                    <!-- Logo -->
+                    <img
+                      src="https://raw.githubusercontent.com/leonard1thecoder/NM-Computer-Care/main/ChatGPT%20Image%20Apr%2028,%202026,%2003_12_20%20PM.png"
+                      alt="NM Computer Care"
+                      width="60"
+                      style="display:block;border-radius:14px;margin-bottom:18px;" />
+
+                    <!-- Confirmation pill -->
+                    <div style="display:inline-block;background:rgba(34,197,94,0.18);
+                                border:1px solid rgba(34,197,94,0.35);border-radius:999px;
+                                padding:6px 14px;margin-bottom:14px;">
+                      <span style="color:#86efac;font-size:11px;font-weight:700;
+                                   letter-spacing:0.12em;text-transform:uppercase;">
+                        ✅ &nbsp;Enquiry Received
+                      </span>
+                    </div>
+
+                    <h1 style="margin:0 0 8px;color:#ffffff;font-size:26px;
+                               font-weight:800;letter-spacing:-0.04em;line-height:1.15;">
+                      Thanks, <span th:text="${name}">John</span>!
+                    </h1>
+                    <p style="margin:0;color:#94a3b8;font-size:14px;line-height:1.6;">
+                      We've received your enquiry and will get back to you<br/>
+                      as soon as possible — usually within 24 hours.
+                    </p>
+                  </td>
+
+                  <!-- Right-side timestamp badge -->
+                  <td align="right" valign="top" style="white-space:nowrap;padding-left:20px;">
+                    <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.10);
+                                border-radius:14px;padding:12px 16px;text-align:center;">
+                      <span style="display:block;color:#94a3b8;font-size:10px;font-weight:700;
+                                   text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">
+                        Submitted
+                      </span>
+                      <span style="display:block;color:#e2e8f0;font-size:13px;font-weight:700;"
+                            th:text="${#temporals.format(submittedAt,'dd MMM yyyy')}">
+                        29 Apr 2026
+                      </span>
+                      <span style="display:block;color:#64748b;font-size:11px;margin-top:2px;"
+                            th:text="${#temporals.format(submittedAt,'HH:mm')}">
+                        10:35
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- ─── GOLD ACCENT STRIPE ─────────────────────────────────── -->
+          <tr>
+            <td style="background:linear-gradient(90deg,#fbbf24,#f59e0b);
+                       height:4px;font-size:0;line-height:0;">&nbsp;</td>
+          </tr>
+
+          <!-- ─── BODY ───────────────────────────────────────────────── -->
+          <tr>
+            <td style="background:#ffffff;padding:36px 40px;">
+
+              <!-- Section label -->
+              <p style="margin:0 0 20px;color:#2563eb;font-size:11px;font-weight:800;
+                         letter-spacing:0.14em;text-transform:uppercase;">
+                Your Submission Summary
+              </p>
+
+              <!-- ── 2-column row: Name + Email ── -->
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:14px;">
+                <tr>
+                  <td width="48%" style="vertical-align:top;">
+                    <div style="background:#f8fafc;border:1px solid #e2e8f0;
+                                border-radius:16px;padding:16px 18px;">
+                      <p style="margin:0 0 5px;color:#94a3b8;font-size:10px;
+                                 font-weight:700;letter-spacing:0.12em;text-transform:uppercase;">
+                        Full Name
+                      </p>
+                      <p style="margin:0;color:#0f172a;font-size:15px;font-weight:700;"
+                         th:text="${name}">
+                        John Doe
+                      </p>
+                    </div>
+                  </td>
+                  <td width="4%"></td>
+                  <td width="48%" style="vertical-align:top;">
+                    <div style="background:#f8fafc;border:1px solid #e2e8f0;
+                                border-radius:16px;padding:16px 18px;">
+                      <p style="margin:0 0 5px;color:#94a3b8;font-size:10px;
+                                 font-weight:700;letter-spacing:0.12em;text-transform:uppercase;">
+                        Email Address
+                      </p>
+                      <p style="margin:0;color:#2563eb;font-size:15px;font-weight:700;
+                                word-break:break-all;"
+                         th:text="${email}">
+                        john@example.com
+                      </p>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- ── 2-column row: Phone + Service ── -->
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:14px;">
+                <tr>
+                  <td width="48%" style="vertical-align:top;">
+                    <div style="background:#f8fafc;border:1px solid #e2e8f0;
+                                border-radius:16px;padding:16px 18px;">
+                      <p style="margin:0 0 5px;color:#94a3b8;font-size:10px;
+                                 font-weight:700;letter-spacing:0.12em;text-transform:uppercase;">
+                        Phone Number
+                      </p>
+                      <p style="margin:0;color:#0f172a;font-size:15px;font-weight:700;"
+                         th:text="${phone}">
+                        +27 81 234 5678
+                      </p>
+                    </div>
+                  </td>
+                  <td width="4%"></td>
+                  <td width="48%" style="vertical-align:top;">
+                    <div style="background:#f8fafc;border:1px solid #e2e8f0;
+                                border-radius:16px;padding:16px 18px;">
+                      <p style="margin:0 0 5px;color:#94a3b8;font-size:10px;
+                                 font-weight:700;letter-spacing:0.12em;text-transform:uppercase;">
+                        Service Requested
+                      </p>
+                      <span style="display:inline-block;background:rgba(37,99,235,0.09);
+                                   color:#2563eb;border-radius:999px;
+                                   padding:4px 12px;font-size:13px;font-weight:800;"
+                            th:text="${service}">
+                        Laptop Repair
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- ── Full-width: Message ── -->
+              <div style="background:#f8fafc;border:1px solid #e2e8f0;
+                          border-radius:16px;padding:18px;margin-bottom:28px;">
+                <p style="margin:0 0 8px;color:#94a3b8;font-size:10px;
+                           font-weight:700;letter-spacing:0.12em;text-transform:uppercase;">
+                  Your Message
+                </p>
+                <p style="margin:0;color:#334155;font-size:15px;line-height:1.75;"
+                   th:text="${message}">
+                  Hi, I have a laptop that's overheating and running very slowly.
+                </p>
+              </div>
+
+              <!-- ── What Happens Next ── -->
+              <div style="background:linear-gradient(135deg,#eff6ff,#eef2ff);
+                          border:1px solid #bfdbfe;border-radius:16px;padding:20px 22px;margin-bottom:28px;">
+                <p style="margin:0 0 14px;color:#1d4ed8;font-size:11px;font-weight:800;
+                           letter-spacing:0.14em;text-transform:uppercase;">
+                  ⚡ What Happens Next
+                </p>
+                <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                  <tr>
+                    <td style="padding-bottom:10px;">
+                      <span style="display:inline-block;background:#2563eb;color:#fff;
+                                   border-radius:999px;width:22px;height:22px;text-align:center;
+                                   font-size:12px;font-weight:800;line-height:22px;margin-right:10px;">1</span>
+                      <span style="color:#1e3a8a;font-size:14px;font-weight:600;">
+                        Our team reviews your enquiry
+                      </span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding-bottom:10px;">
+                      <span style="display:inline-block;background:#2563eb;color:#fff;
+                                   border-radius:999px;width:22px;height:22px;text-align:center;
+                                   font-size:12px;font-weight:800;line-height:22px;margin-right:10px;">2</span>
+                      <span style="color:#1e3a8a;font-size:14px;font-weight:600;">
+                        We contact you within 24 hours
+                      </span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <span style="display:inline-block;background:#2563eb;color:#fff;
+                                   border-radius:999px;width:22px;height:22px;text-align:center;
+                                   font-size:12px;font-weight:800;line-height:22px;margin-right:10px;">3</span>
+                      <span style="color:#1e3a8a;font-size:14px;font-weight:600;">
+                        We get your device fixed fast 🛠️
+                      </span>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+
+              <!-- ── Contact Info ── -->
+              <p style="margin:0 0 8px;color:#94a3b8;font-size:11px;font-weight:700;
+                         letter-spacing:0.12em;text-transform:uppercase;">
+                Need urgent help?
+              </p>
+              <p style="margin:0 0 24px;color:#334155;font-size:14px;line-height:1.7;">
+                Call or WhatsApp us directly at
+                <a href="tel:+27000000000"
+                   style="color:#2563eb;font-weight:700;text-decoration:none;">
+                  +27 00 000 0000
+                </a>
+                and we'll assist you right away.
+              </p>
+
+            </td>
+          </tr>
+
+          <!-- ─── DARK FOOTER ─────────────────────────────────────────── -->
+          <tr>
+            <td style="background:linear-gradient(135deg,#0f172a 0%,#111827 100%);
+                       padding:28px 40px 32px;">
+              <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td>
+                    <p style="margin:0 0 4px;color:#e2e8f0;font-size:14px;font-weight:800;">
+                      NM Computer Care
+                    </p>
+                    <p style="margin:0;color:#64748b;font-size:12px;line-height:1.6;">
+                      This is an automated confirmation of your contact form submission.<br/>
+                      Please do not reply to this email.
+                    </p>
+                  </td>
+                  <td align="right" valign="middle" style="padding-left:20px;">
+                    <div>
+                      <span style="color:#fbbf24;font-size:16px;letter-spacing:1px;">★★★★★</span>
+                      <p style="margin:4px 0 0;color:#64748b;font-size:10px;text-align:right;">
+                        Trusted IT Services
+                      </p>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+        </table>
+        <!-- / Email card -->
+
+        <!-- Bottom note -->
+        <p style="margin:20px 0 0;color:#94a3b8;font-size:11px;text-align:center;">
+          © 2026 NM Computer Care &nbsp;·&nbsp; Mpumalanga, South Africa
+        </p>
+
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>
