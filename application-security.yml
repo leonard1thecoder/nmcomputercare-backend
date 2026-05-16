@@ -1,0 +1,91 @@
+# ─────────────────────────────────────────────────────────────────────────────
+#  Security module — add these blocks to your application.yml
+# ─────────────────────────────────────────────────────────────────────────────
+
+jwt:
+  # Generate a Base64-encoded 256-bit key:
+  #   openssl rand -base64 32
+  secret: REPLACE_WITH_YOUR_BASE64_256BIT_SECRET_KEY_HERE
+  expiration: 86400000   # 24 hours in milliseconds (adjust as needed)
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  README — Security module wiring guide
+# ─────────────────────────────────────────────────────────────────────────────
+#
+#  PACKAGE STRUCTURE
+#  ─────────────────────────────────────────────────────────────────────────
+#  security/
+#  ├── config/
+#  │   ├── SecurityConfig.java           @EnableWebSecurity + filter chain
+#  │   └── CustomUserDetailsService.java  loads User by email
+#  └── jwt/
+#      ├── JwtService.java               generate + validate + parse tokens
+#      └── JwtAuthenticationFilter.java  OncePerRequestFilter extracts JWT
+#
+#  user/
+#  ├── entity/
+#  │   ├── Privilege.java                enum: ADMIN, KING_SPARKON_USER
+#  │   ├── UserStatus.java               enum: NOT_VERIFIED, VERIFIED
+#  │   └── User.java                     JPA entity implementing UserDetails
+#  ├── repository/
+#  │   └── UserRepository.java
+#  ├── dtos/
+#  │   ├── RegisterRequest.java
+#  │   ├── LoginRequest.java
+#  │   ├── AuthResponse.java             JWT + user info
+#  │   ├── UserResponse.java
+#  │   ├── UpdateUserStatusRequest.java
+#  │   ├── FindAllUsersRequest.java
+#  │   ├── FindUserByIdRequest.java
+#  │   ├── DeleteUserRequest.java
+#  │   └── PagedUserResponse.java
+#  ├── validator/
+#  │   └── UserValidator.java
+#  ├── service/
+#  │   ├── AuthService.java              register + login (implements ExecuteService)
+#  │   └── UserService.java              admin CRUD (implements ExecuteService)
+#  ├── controller/
+#  │   ├── AuthController.java           POST /api/v1/auth/register + /login
+#  │   └── UserController.java           /api/v1/users/** (ADMIN only)
+#  └── exceptions/
+#      └── SecurityExceptionHandler.java @RestControllerAdvice
+#
+#  ENDPOINTS
+#  ─────────────────────────────────────────────────────────────────────────
+#  PUBLIC (no token needed)
+#    POST /api/v1/auth/register          → 201 + JWT (account starts NOT_VERIFIED)
+#    POST /api/v1/auth/login             → 200 + JWT (403 if NOT_VERIFIED)
+#    GET  /api/v1/newsletters/**         → read newsletters freely
+#    POST /api/v1/subscriptions          → subscribe
+#    GET  /api/subscriptions/verify      → email verification redirect
+#    POST /api/v1/contact-forms          → submit enquiry
+#
+#  ADMIN + KING_SPARKON_USER (Bearer token required)
+#    DELETE /api/v1/subscriptions        → unsubscribe
+#    GET  /api/v1/subscriptions/**       → read subscriptions
+#    GET  /api/v1/contact-forms/**       → read contact forms
+#    /**  /api/v1/basic-care-plans/**
+#    /**  /api/v1/performance-care-plans/**
+#    /**  /api/v1/business-care-plans/**
+#
+#  ADMIN only
+#    POST/PUT/DELETE /api/v1/newsletters/**
+#    PATCH /api/v1/users/{id}/status     → verify/unverify account
+#    GET/DELETE /api/v1/users/**
+#
+#  USAGE FLOW
+#  ─────────────────────────────────────────────────────────────────────────
+#  1. POST /api/v1/auth/register  → receive token (account NOT_VERIFIED)
+#  2. Admin: PATCH /api/v1/users/{id}/status?status=VERIFIED
+#  3. POST /api/v1/auth/login     → receive token (now works on protected routes)
+#  4. Add header:  Authorization: Bearer <token>
+#
+#  TOKEN CONTENT
+#  ─────────────────────────────────────────────────────────────────────────
+#  {
+#    "sub":    "user@example.com",
+#    "role":   "KING_SPARKON_USER",
+#    "userId": 42,
+#    "iat":    1700000000,
+#    "exp":    1700086400
+#  }
